@@ -1,5 +1,7 @@
 package ChessBoard;
 
+import ChessBoard.ChessPieces.KingUtils;
+
 public class MovePiece {
     public static void removePiece(long removeAtCoordinate, Board board) {
         board.whitePawns &= ~removeAtCoordinate;

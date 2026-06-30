@@ -1,6 +1,7 @@
-package ChessBoard;
+package ChessBoard.ChessPieces;
 
-import java.util.logging.ErrorManager;
+import ChessBoard.Board;
+import ChessBoard.MovePiece;
 
 public class KingUtils {
     public static boolean IsMate(Board board) {

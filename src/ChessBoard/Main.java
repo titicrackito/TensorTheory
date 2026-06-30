@@ -1,5 +1,7 @@
 package ChessBoard;
 
+import ChessBoard.ChessPieces.KingUtils;
+
 import java.util.Scanner;
 
 public class Main {
