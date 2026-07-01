@@ -1,6 +1,6 @@
 package ChessBoard;
 
-import ChessBoard.ChessPieces.KingUtils;
+import ChessBoard.ChessPieces.*;
 
 public class MovePiece {
     public static void removePiece(long removeAtCoordinate, Board board) {
@@ -25,7 +25,6 @@ public class MovePiece {
         char piece = chessBoard.getPiece(bformCoordinate).charAt(0);
         removePiece(bformCoordinate, chessBoard);
         removePiece(bnewCoordinate, chessBoard);
-        //Implémenter vérif coup légal ou non
         switch (piece) {
             case 'P':
                 chessBoard.whitePawns |= bnewCoordinate;
@@ -95,16 +94,16 @@ public class MovePiece {
                 return true;
             case "R":
             case "r":
-                return true;
+                return RookUtils.RookLegalMoves(board, pieceToMove, coordinate);
             case "N":
             case "n":
-                return true;
+                return KnightUtils.KnightLegalMoves(board, pieceToMove, coordinate);
             case "B":
             case "b":
-                return true;
+                return BishopUtils.BishopLegalMoves(board, pieceToMove, coordinate);
             case "Q":
             case "q":
-                return true;
+                return QueenUtils.QueenLegalMoves(board, pieceToMove, coordinate);
             default: return false;
         }
 
@@ -125,6 +124,19 @@ public class MovePiece {
                     return false;
                 }
             }
+        }
+        public static boolean IsAnOppositePiece(Board board, long pieceToMove, long coordinate) {
+            String pieceHavingToMove = board.getPiece(pieceToMove);
+            String piece = board.getPiece(coordinate);
+            if(((pieceHavingToMove.equals("p") || pieceHavingToMove.equals("r")
+                    || pieceHavingToMove.equals("n") || pieceHavingToMove.equals("b")
+                    || pieceHavingToMove.equals("q") || pieceHavingToMove.equals("k"))
+                    && (piece.equals("P") || piece.equals("R") || piece.equals("N") || piece.equals("B") || piece.equals("Q") || piece.equals("K")))
+                    || ((pieceHavingToMove.equals("P") || pieceHavingToMove.equals("R") || pieceHavingToMove.equals("N")
+                    || pieceHavingToMove.equals("B") || pieceHavingToMove.equals("Q") || pieceHavingToMove.equals("K")) && ((piece.equals("p") ||
+                    piece.equals("r") || piece.equals("n") || piece.equals("b") || piece.equals("q") || piece.equals("k")))))
+            {return true;}
+            return false;
         }
     }
 

@@ -15,7 +15,8 @@ public class Main {
         while(!checkmate){
             BitBoardUtils.DisplayBoard(chessboard);
 
-            System.out.println("White Turn:\n\tEnter a move to play--> ");
+            if (isWhiteTurn){System.out.println("White Turn:\n\tEnter a move to play--> ");}
+            if (!isWhiteTurn){System.out.println("Black Turn:\n\tEnter a move to play--> ");}
             boolean rightPieces =false;
             String pieceToPlay = input.nextLine();
             long biPieceToPlay = StandardToBinary.ToBinary(pieceToPlay);

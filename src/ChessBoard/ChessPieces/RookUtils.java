@@ -5,29 +5,24 @@ import ChessBoard.MovePiece;
 
 public class RookUtils {
     public static boolean RookLegalMoves(Board board, long rookToMove, long coordinates) {
-        int row = Long.numberOfTrailingZeros(rookToMove)/8;
+        int row = Long.numberOfTrailingZeros(rookToMove) / 8;
         int col = Long.numberOfTrailingZeros(rookToMove) % 8;
+        int[] shift = {1, -1 , 8, -8};
+        int[] range = {(7-col) , col , 7-row , row};
         long legalMoves = 0L;
-        String pieceHavingToMove = board.getPiece(coordinates);
-        String piece = board.getPiece(coordinates);
-        for (long j = 1; j < 7-col; j++) {
-            long currentSquare = rookToMove<<j;
-            if (MovePiece.IsSquareOccupied(board,rookToMove, currentSquare ))
-            {break;}
-            legalMoves |= currentSquare;
-            if ((pieceHavingToMove.equals("p") || pieceHavingToMove.equals("r")
-                    || pieceHavingToMove.equals("n") || pieceHavingToMove.equals("b")
-                    || pieceHavingToMove.equals("q") || pieceHavingToMove.equals("k"))
-            && (piece.equals("P") || piece.equals("R") || piece.equals("N") || piece.equals("B") || piece.equals("Q") || piece.equals("K"))
-            || ((pieceHavingToMove.equals("P") || pieceHavingToMove.equals("R") || pieceHavingToMove.equals("N")
-                    || pieceHavingToMove.equals("B") || pieceHavingToMove.equals("Q") || pieceHavingToMove.equals("K")) || (piece.equals("p") ||
-                    piece.equals("r") || piece.equals("n") || piece.equals("b") || piece.equals("q") || piece.equals("k")))){break;};
 
-
-
-
-        }
-    if (coordinates != (coordinates & ~legalMoves)) {return false;}
-    return true;
+        long currentSquare = rookToMove;
+        for (int direction = 0; direction <=3; direction++) {
+            for (int j = 1; j <= range[direction]; j++) {
+                if (shift[direction]>0){currentSquare = rookToMove << (j*shift[direction]);}
+                if (shift[direction]<0){currentSquare = rookToMove >> (j*(-1*shift[direction]));}
+            if (MovePiece.IsSquareOccupied(board, rookToMove, currentSquare)) {
+                break;
+            }
+            if (currentSquare == coordinates) {return true;}
+            if (MovePiece.IsAnOppositePiece(board, rookToMove, currentSquare)) {
+                break;
+            }}
+        } return false;
     }
 }
