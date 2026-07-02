@@ -91,7 +91,7 @@ public class MovePiece {
                 return KingUtils.KingLegalMove(board, pieceToMove, coordinate);
             case "P":
             case "p":
-                return true;
+                return PawnUtils.PawnLegalMoves(board, pieceToMove, coordinate);
             case "R":
             case "r":
                 return RookUtils.RookLegalMoves(board, pieceToMove, coordinate);

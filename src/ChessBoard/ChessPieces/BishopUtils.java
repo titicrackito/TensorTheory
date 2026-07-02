@@ -19,7 +19,7 @@ public class BishopUtils {
                     currentSquare = BishopToMove << (j * shift[direction]);
                 }
                 if (shift[direction] < 0) {
-                    currentSquare = BishopToMove >> (j * (-1 * shift[direction]));
+                    currentSquare = BishopToMove >>> (j * (-1 * shift[direction]));
                 }
                 if (MovePiece.IsSquareOccupied(board, BishopToMove, currentSquare)) {
                     break;

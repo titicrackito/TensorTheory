@@ -30,7 +30,7 @@ public class KnightUtils {
         long currentSquare = knightToMove;
         for (int index : indexMoves) {
             if (index < 0) {
-                currentSquare = knightToMove >> (-index);
+                currentSquare = knightToMove >>> (-index);
             } else {
                 currentSquare = knightToMove << index;
             }

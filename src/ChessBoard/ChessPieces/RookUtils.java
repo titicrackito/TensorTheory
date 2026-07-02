@@ -15,7 +15,7 @@ public class RookUtils {
         for (int direction = 0; direction <=3; direction++) {
             for (int j = 1; j <= range[direction]; j++) {
                 if (shift[direction]>0){currentSquare = rookToMove << (j*shift[direction]);}
-                if (shift[direction]<0){currentSquare = rookToMove >> (j*(-1*shift[direction]));}
+                if (shift[direction]<0){currentSquare = rookToMove >>> (j*(-1*shift[direction]));}
             if (MovePiece.IsSquareOccupied(board, rookToMove, currentSquare)) {
                 break;
             }
