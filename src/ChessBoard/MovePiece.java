@@ -3,6 +3,7 @@ package ChessBoard;
 import ChessBoard.ChessPieces.*;
 
 public class MovePiece {
+
     public static void removePiece(long removeAtCoordinate, Board board) {
         board.whitePawns &= ~removeAtCoordinate;
         board.whiteRooks &= ~removeAtCoordinate;
@@ -19,71 +20,88 @@ public class MovePiece {
         board.blackKing &= ~removeAtCoordinate;
     }
 
-    public static void MoveAPiece(String formerCoordinates, String newCoordinates, Board chessBoard) {
-        long bformCoordinate = StandardToBinary.ToBinary(formerCoordinates);
-        long bnewCoordinate = StandardToBinary.ToBinary(newCoordinates);
-        char piece = chessBoard.getPiece(bformCoordinate).charAt(0);
-        removePiece(bformCoordinate, chessBoard);
-        removePiece(bnewCoordinate, chessBoard);
+    public static void MoveAPiece(long from, long to, Board chessBoard) {
+        char piece = chessBoard.getPiece(from).charAt(0);
+        removePiece(from, chessBoard);
+        removePiece(to, chessBoard);
         switch (piece) {
             case 'P':
-                chessBoard.whitePawns |= bnewCoordinate;
+                chessBoard.whitePawns |= to;
                 break;
             case 'R':
-                chessBoard.whiteRooks |= bnewCoordinate;
+                chessBoard.whiteRooks |= to;
+                if (from == 0x0000_0000_0000_0001L) {chessBoard.WhiteLongCastle=false;}
+                if (from == 0x0000_0000_0000_0080L) {chessBoard.WhiteShortCastle=false;}
                 break;
             case 'N':
-                chessBoard.whiteKnights |= bnewCoordinate;
+                chessBoard.whiteKnights |= to;
                 break;
             case 'B':
-                chessBoard.whiteBishops |= bnewCoordinate;
+                chessBoard.whiteBishops |= to;
                 break;
             case 'Q':
-                chessBoard.whiteQueens |= bnewCoordinate;
+                chessBoard.whiteQueens |= to;
                 break;
             case 'K':
-                chessBoard.whiteKing |= bnewCoordinate;
+                chessBoard.whiteKing |= to;
+                chessBoard.WhiteShortCastle = false;
+                chessBoard.WhiteLongCastle = false;
                 break;
 
             case 'p':
-                chessBoard.blackPawns |= bnewCoordinate;
+                chessBoard.blackPawns |= to;
                 break;
             case 'r':
-                chessBoard.blackRooks |= bnewCoordinate;
+                chessBoard.blackRooks |= to;
+                if (from == 0x0100_0000_0000_0000L) {chessBoard.BlackLongCastle=false;}
+                if (from == 0x8000_0000_0000_0000L) {chessBoard.BlackShortCastle=false;}
                 break;
             case 'n':
-                chessBoard.blackKnights |= bnewCoordinate;
+                chessBoard.blackKnights |= to;
                 break;
             case 'b':
-                chessBoard.blackBishops |= bnewCoordinate;
+                chessBoard.blackBishops |= to;
                 break;
             case 'q':
-                chessBoard.blackQueens |= bnewCoordinate;
+                chessBoard.blackQueens |= to;
                 break;
             case 'k':
-                chessBoard.blackKing |= bnewCoordinate;
+                chessBoard.blackKing |= to;
                 break;
 
             default:
                 throw new IllegalArgumentException("Unrecognized piece ");
         }
+        // TODO PROMOTION : c'est ICI que tu la traiteras.
     }
 
-    public static boolean IsSquareOccupied(Board board,long pieceToMove, long coordinate) {
-        String piece = board.getPiece(coordinate);
-        String pieceHavingToMove = board.getPiece(pieceToMove);
-        if (pieceHavingToMove.equals("P") || pieceHavingToMove.equals("R") || pieceHavingToMove.equals("N") || pieceHavingToMove.equals("B") || pieceHavingToMove.equals("Q") || pieceHavingToMove.equals("K")) {
-            if (piece.equals("P") || piece.equals("R") || piece.equals("N") || piece.equals("B") || piece.equals("Q") || piece.equals("K")) {
-                return true;
-            }}
-        if (pieceHavingToMove.equals("p") || pieceHavingToMove.equals("r") || pieceHavingToMove.equals("n") || pieceHavingToMove.equals("b") || pieceHavingToMove.equals("q") || pieceHavingToMove.equals("k")) {
-            if (piece.equals("p") || piece.equals("r") || piece.equals("n") || piece.equals("b") || piece.equals("q") || piece.equals("k")) {
-                return true;
-            }}
-            return false;
+    public static void MoveAPiece(String formerCoordinates, String newCoordinates, Board chessBoard) {
+        long from = StandardToBinary.ToBinary(formerCoordinates);
+        long to = StandardToBinary.ToBinary(newCoordinates);
+        MoveAPiece(from, to, chessBoard);
     }
+    public static boolean IsSquareOccupied(Board board, long pieceToMove, long coordinate) {
+        if ((board.whitePieces() & pieceToMove) != 0) {
+            return (board.whitePieces() & coordinate) != 0;
+        }
+        if ((board.blackPieces() & pieceToMove) != 0) {
+            return (board.blackPieces() & coordinate) != 0;
+        }
+        return false;
+    }
+
+    public static boolean IsAnOppositePiece(Board board, long pieceToMove, long coordinate) {
+        if ((board.whitePieces() & pieceToMove) != 0) {
+            return (board.blackPieces() & coordinate) != 0;
+        }
+        if ((board.blackPieces() & pieceToMove) != 0) {
+            return (board.whitePieces() & coordinate) != 0;
+        }
+        return false;
+    }
+
     public static boolean IsLegalMove(Board board, long pieceToMove, long coordinate) {
-        if (pieceToMove==-1L || coordinate==-1L){return false;}
+        if (pieceToMove == -1L || coordinate == -1L) {return false;}
         String piece = board.getPiece(pieceToMove);
         switch (piece) {
             case "K":
@@ -104,39 +122,14 @@ public class MovePiece {
             case "Q":
             case "q":
                 return QueenUtils.QueenLegalMoves(board, pieceToMove, coordinate);
-            default: return false;
+            default:
+                return false;
         }
-
     }
     public static boolean IsRightPieces(Board board, boolean whiteTurn, long pieceToMove) {
         if (whiteTurn) {
-            switch (board.getPiece(pieceToMove)) {
-                case "P", "R", "N", "B", "Q", "K" -> {
-                    return true;
-                }default -> {return false;}
-                }
-            }
-            switch (board.getPiece(pieceToMove)) {
-                case "p", "r", "n", "b", "q", "k" -> {
-                    return true;
-                }
-                default -> {
-                    return false;
-                }
-            }
+            return (board.whitePieces() & pieceToMove) != 0;
         }
-        public static boolean IsAnOppositePiece(Board board, long pieceToMove, long coordinate) {
-            String pieceHavingToMove = board.getPiece(pieceToMove);
-            String piece = board.getPiece(coordinate);
-            if(((pieceHavingToMove.equals("p") || pieceHavingToMove.equals("r")
-                    || pieceHavingToMove.equals("n") || pieceHavingToMove.equals("b")
-                    || pieceHavingToMove.equals("q") || pieceHavingToMove.equals("k"))
-                    && (piece.equals("P") || piece.equals("R") || piece.equals("N") || piece.equals("B") || piece.equals("Q") || piece.equals("K")))
-                    || ((pieceHavingToMove.equals("P") || pieceHavingToMove.equals("R") || pieceHavingToMove.equals("N")
-                    || pieceHavingToMove.equals("B") || pieceHavingToMove.equals("Q") || pieceHavingToMove.equals("K")) && ((piece.equals("p") ||
-                    piece.equals("r") || piece.equals("n") || piece.equals("b") || piece.equals("q") || piece.equals("k")))))
-            {return true;}
-            return false;
-        }
+        return (board.blackPieces() & pieceToMove) != 0;
     }
-
+}

@@ -10,38 +10,55 @@ public class Main {
 
         try (Scanner input = new Scanner(System.in)) {
             boolean isWhiteTurn = true;
-            boolean checkmate = false;
             int numberOfMoves = 0;
-            while (!checkmate) {
-                BitBoardUtils.DisplayBoard(chessboard);
 
+            while (true) {
+                BitBoardUtils.DisplayBoard(chessboard);
+                boolean inCheck = KingUtils.IsInCheck(chessboard, isWhiteTurn);
+                if (!KingUtils.HasLegalMove(chessboard, isWhiteTurn)) {
+                    if (inCheck) {
+                        System.out.println(isWhiteTurn
+                                ? "Black won by checkmate"
+                                : "White won by checkmate");
+                    } else {
+                        System.out.println("Stalemate: draw");
+                    }
+                    break;
+                }
+
+                if (inCheck) {
+                    System.out.println("Check");
+                }
                 if (isWhiteTurn) {
                     System.out.println("White Turn:\n\tEnter a move to play--> ");
                 } else {
                     System.out.println("Black Turn:\n\tEnter a move to play--> ");
                 }
-                boolean rightPieces = false;
-                String pieceToPlay = input.nextLine();
-                long biPieceToPlay = StandardToBinary.ToBinary(pieceToPlay);
-                String move = input.nextLine();
-                long biMove = StandardToBinary.ToBinary(move);
-                boolean ValidMove = false;
-                while (!ValidMove) {
-                    if (MovePiece.IsLegalMove(chessboard, biPieceToPlay, biMove) && MovePiece.IsRightPieces(chessboard, isWhiteTurn, biPieceToPlay)) {
-                        ValidMove = true;
-                        MovePiece.MoveAPiece(pieceToPlay, move, chessboard);
-                        isWhiteTurn = !isWhiteTurn;
-                        numberOfMoves++;
+                boolean validMove = false;
+                while (!validMove) {
+                    String pieceToPlay = input.nextLine();
+                    String move = input.nextLine();
+                    long from = StandardToBinary.ToBinary(pieceToPlay);
+                    long to = StandardToBinary.ToBinary(move);
+
+                    if (MovePiece.IsLegalMove(chessboard, from, to)
+                            && MovePiece.IsRightPieces(chessboard, isWhiteTurn, from)) {
+                        Board verificationBoard = new Board();
+                        verificationBoard.copy(chessboard);
+                        MovePiece.MoveAPiece(from, to, verificationBoard);
+
+                        if (KingUtils.IsInCheck(verificationBoard, isWhiteTurn)) {
+                            System.out.println("This move leaves your king in check\n\tEnter a move to play--> ");
+                        } else {
+                            MovePiece.MoveAPiece(from, to, chessboard);
+                            isWhiteTurn = !isWhiteTurn;
+                            numberOfMoves++;
+                            validMove = true;
+                        }
                     } else {
-                        BitBoardUtils.DisplayBoard(chessboard);
-                        System.out.println("Illegal Move\n\tenter a move to play--> ");
-                        pieceToPlay = input.nextLine();
-                        move = input.nextLine();
-                        biPieceToPlay = StandardToBinary.ToBinary(pieceToPlay);
-                        biMove = StandardToBinary.ToBinary(move);
+                        System.out.println("Illegal Move\n\tEnter a move to play--> ");
                     }
                 }
-                checkmate = KingUtils.IsMate(chessboard);
             }
         }
     }

@@ -24,7 +24,7 @@ public class BishopUtils {
                 if (MovePiece.IsSquareOccupied(board, BishopToMove, currentSquare)) {
                     break;
                 }
-                if (currentSquare == coordinates) {
+                if ((currentSquare & coordinates) != 0) {
                     return true;
                 }
                 if (MovePiece.IsAnOppositePiece(board, BishopToMove, currentSquare)) {
